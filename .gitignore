@@ -1,0 +1,4 @@
+## file to not push to git ##
+#############################
+my.secrets
+my.vars
