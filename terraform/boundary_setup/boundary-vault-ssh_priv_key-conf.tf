@@ -12,5 +12,5 @@ resource "boundary_credential_library_vault_ssh_certificate" "vault_lib" {
   description         = "Vault SSH certificate credential library"
   credential_store_id = boundary_credential_store_vault.vault_creds.id
   path                = "ssh/sign/ssh_role"
-  username            = "admin"
+  username            = "ubuntu"
 }

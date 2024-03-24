@@ -24,9 +24,12 @@ resource "vault_ssh_secret_backend_role" "ssh_role" {
     backend                 = vault_mount.ssh.path
     key_type                = "ca"
     allow_user_certificates = true
+    default_user  = "ubuntu"
+    allowed_users = "ubuntu"
+    default_extensions      = {"permit-pty" = ""}
 }
 
-# Cterraform vault reate a kvv2 secret mount
+# create a kvv2 secret mount
 resource "vault_mount" "kvv2" {
   path        = "kvv2"
   type        = "kv"

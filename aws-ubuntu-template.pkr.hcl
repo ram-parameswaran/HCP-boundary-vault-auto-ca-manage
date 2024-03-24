@@ -61,9 +61,8 @@ build {
       "sleep 5",
       "echo ${var.TRUSTED_CA} > /tmp/trusted-user-ca-keys.pem",
       "sudo cp /tmp/trusted-user-ca-keys.pem /etc/ssh/trusted-user-ca-keys.pem",
-      "sudo chmod 0640 /etc/ssh/trusted-user-ca-keys.pem",
       "rm /tmp/trusted-user-ca-keys.pem",
-      "sudo bash -c \"echo 'TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pem' | tee -a /etc/ssh/sshd_config c\"",
+      "sudo bash -c \"echo 'TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pem' | tee -a /etc/ssh/sshd_config\"",
     ]
   }
 

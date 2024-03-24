@@ -1,4 +1,4 @@
-### HCP-boundary-vault-auto-ca-manage - Ram
+### HCP-boundary-vault-auto-ca-manage
 Framework to use HCP tooling to manage AMI's CA auth from boundary via vault driven byy github actions and Terraform
 
 ## Outcomes:
@@ -28,9 +28,9 @@ Github actions drives:
 - Packer builds image containing SSH private key for SSH ca auth
 - Image is uploaded/dated in AWS AMI store
 - Terraform sets up Boundary and Vault cred association
-- Terraform Boundary creds store 
+- Terraform Boundary credentials store 
 - Terraform setups Boundary users
-- Terrafrom setup some t2 micro ec2's for testing
+- Terraform setup some t2 micro ec2's for testing
 
 ## Setup / Use:
 - Fork the repository
@@ -51,7 +51,9 @@ Github actions drives:
     - HCP_CLIENT_SECRET
     - HCP_ORGANIZATION_ID
     - HCP_PROJECT_ID
-    - HCP_SERVICE_PRINCIPLE_ID
+
+note:
+as per [Create HCP service principal and set env var](https://developer.hashicorp.com/packer/tutorials/hcp-get-started/hcp-push-artifact-metadata#create-hcp-service-principal-and-set-to-environment-variable)
 
 # Terraform cloud setup:
 - need to use an team owner token for access
@@ -61,18 +63,26 @@ Github actions drives:
     - TF_API_TOKEN
     - TF_ORG_API_TOKEN
 
+In addition to the secrets you also need to setup the following Github action [variables](https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository)
+
+- TF_CLOUD_ORGANIZATION = the neame of your TF cloud organisation
+- TF_SSH_SETUP_WORKSPACE = HCP-boundary-vault-auto-ca-manage
+- TF_BOUNDARY_SETUP_WORKSPACE = HCP-boundary-vault-boundary_setup
+- TF_INFRA_SETUP_WORKSPACE = HCP-boundary-vault-infra_setup
+
 # HCP Vault setup:
 - Create [Github actions secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) for:
     - VAULT_ADDR
     - VAULT_TOKEN
 
 note: 
-To create a the vault token use the following and if not testing, set the policy appropriatly:
+You need an orphaned token for Terraform to use for this. To create it use the following and if not testing, set the policy appropriately:
 ```
-vault token create -policy=hcp-root -period=1440h -orphan
+NAMESPACE=admin vault token create -policy=hcp-root -period=1440h -orphan
 ```
 
 # HCP Packer setup:
+- Ensure you have a "free registry" created in HCP packer
 - The script will create a bucket named as your repo and a channel based of your branch name if it doesn't already exist
 
 # HCP Boundary setup
@@ -82,10 +92,22 @@ vault token create -policy=hcp-root -period=1440h -orphan
     - BOUNDARY_USER
     
 note: 
-The boundary user need to be root or have root equivelent permissions
+The boundary user needs to be root or have root equivalent permissions
+
+## Boundary workflow
+
+Note: the `keyring-type` flag may not be necessary depending on your OS keyring configuration
+
+```
+boundary authenticate -keyring-type="secret-service"
+boundary connect ssh -host-id <host id> -target-id <target id> -keyring-type="secret-service
+```
 
 ## Planned improvements:
 - Use Vault namespaces
 - move all possible secrets to Vault
+- Implement terraform Cloud secrets engine
+- tag AMI's with project name and add to Boundary host set filter
+- Setup session recording
 
-## Acknowledgements:....
+## Acknowledgements:
